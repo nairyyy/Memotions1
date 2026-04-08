@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stop-Motion Animation Tool</title>
+
+  <!-- Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+
+    body {
+      font-family: "Libre Baskerville", serif;
+      background-color: #000;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* TEXT BOX (same style as previous page) */
+    .text-section {
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 600px;
+      padding: 20px 30px;
+      background: rgba(245, 209, 93, 0.85);
+      border-radius: 45px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      text-align: center;
+      color: rgb(0, 0, 0);
+      z-index: 2;
+    }
+
+    .text-section p {
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    #frame-container {
+      position: absolute;
+      bottom: 20%;
+      left: 0;
+      width: 100%;
+      display: flex;
+      overflow-x: auto;
+      padding: 10px;
+      z-index: 2;
+      scrollbar-width: none;
+    }
+
+    .frame {
+      width: 15vw;
+      height: 10vw;
+      margin: 0 5px;
+      border: 2px solid #fff;
+      border-radius: 5px;
+    }
+
+    .control-bar {
+      position: fixed;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      gap: 15px;
+    }
+
+    button {
+      padding: 15px 25px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background-color: rgba(223,17,17,0.8);
+      color: #fff;
+      font-family: "Libre Baskerville", serif;
+    }
+
+    button:hover {
+      background-color: rgba(200,10,10,0.9);
+    }
+
+    @media (max-width: 600px) {
+      .text-section { font-size: 0.9em; }
+      .frame { width: 18vw; height: 12vw; }
+      button { font-size: 1em; padding: 12px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TEXT BOX -->
+  <div class="text-section">
+    <p>The more pictures you take, the smoother your animation will be.</p>
+    <p><strong>Move your object slowly and take pictures</strong></p>
+  </div>
+
+  <video id="video" autoplay playsinline muted></video>
+
+  <div id="frame-container"></div>
+
+  <!-- Buttons -->
+  <div class="control-bar">
+    <button id="capture">Start Camera / Take Picture</button>
+    <button id="play">Watch Animation</button>
+  </div>
+
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <script>
+    const video = document.getElementById('video');
+    const frameContainer = document.getElementById('frame-container');
+    const captureBtn = document.getElementById('capture');
+    const playBtn = document.getElementById('play');
+    const canvas = document.getElementById('canvas');
+    const frames = [];
+    let cameraStarted = false;
+
+    async function startCamera() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        video.srcObject = stream;
+        cameraStarted = true;
+        captureBtn.textContent = "Take Picture";
+      } catch(err) {
+        alert('Camera access denied or unavailable: ' + err);
+      }
+    }
+
+    captureBtn.addEventListener('click', () => {
+      if(!cameraStarted) {
+        startCamera();
+        return;
+      }
+
+      const context = canvas.getContext('2d');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const frameData = canvas.toDataURL('image/jpeg', 0.5);
+      frames.push(frameData);
+
+      const img = document.createElement('img');
+      img.src = frameData;
+      img.className = 'frame';
+      frameContainer.appendChild(img);
+    });
+
+    playBtn.addEventListener('click', () => {
+      if(frames.length === 0) {
+        alert("Take at least one picture first!");
+        return;
+      }
+
+      try {
+        localStorage.setItem('stopMotionFrames', JSON.stringify(frames));
+        window.location.href = 'j.html?nocache=' + new Date().getTime();
+      } catch(err) {
+        alert("Error saving animation: " + err);
+      }
+    });
+  </script>
+
+</body>
+</html>
