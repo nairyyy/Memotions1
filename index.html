@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallax Scrolling with Video Background</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --background-color: #e7d583;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+      font-family: "Libre Baskerville", serif;
+    }
+
+    .parallax {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background-color: var(--background-color);
+    }
+
+    .parallax video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: translate(-50%, -50%);
+      z-index: 0;
+    }
+
+    .text-section {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 600px;
+      padding: 20px 30px;
+      background: rgba(0, 0, 0, 0.85);
+      border-radius: 45px;
+      font-size: 1.2em;
+      text-align: center;
+      color: white;
+      z-index: 2;
+    }
+
+    .floating-image {
+      position: absolute;
+      height: 50vh;
+      animation: float 2s infinite alternate ease-in-out;
+      z-index: 1;
+    }
+
+    .png1 { top: 75%; left: 10%; }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-20px); }
+    }
+
+    .last-slide {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      background-color: var(--background-color);
+    }
+
+    .last-slide video {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .last-slide button {
+      z-index: 2;
+      padding: 20px 40px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      border: none;
+      background-color: rgba(223,17,17,0.7);
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Slide 1 -->
+<div class="parallax">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="video1.mp4" type="video/mp4">
+  </video>
+  <img src="png1.png" class="floating-image png1">
+  <div class="text-section">
+    Animation comes from a Latin word that means 'to give life.'
+  </div>
+</div>
+
+<!-- Slide 2 -->
+<div class="parallax">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="video3.mp4" type="video/mp4">
+  </video>
+  <div class="text-section">
+    It’s a way of bringing objects to life and making them move.
+  </div>
+</div>
+
+<!-- Slide 3 -->
+<div class="parallax">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="video4.mp4" type="video/mp4">
+  </video>
+  <div class="text-section">
+    If your object could move, where would it go? Just think about it.
+  </div>
+</div>
+
+<!-- Slide 4 -->
+<div class="parallax">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="video1.mp4" type="video/mp4">
+  </video>
+  <div class="text-section">
+    How would it move?
+  </div>
+</div>
+
+<!-- Slide 5 -->
+<div class="parallax">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="video3.mp4" type="video/mp4">
+  </video>
+  <div class="text-section">
+    If it could talk, what would it say to you
+  </div>
+</div>
+
+<!-- Slide 6 (FIXED: was broken PNG) -->
+<div class="parallax" style="background-image: url('image1.png'); background-size: cover; background-position: center;">
+  <div class="text-section">
+    Place your object on the stand and tap the camera icon.
+  </div>
+</div>
+
+<!-- Last Slide -->
+<div class="last-slide">
+  <video autoplay muted loop playsinline preload="auto">
+    <source src="videoLast.mp4" type="video/mp4">
+  </video>
+
+  <a href="i.html">
+    <button>Open Camera</button>
+  </a>
+</div>
+
+<!-- AUTOPLAY FIX SCRIPT -->
+<script>
+document.querySelectorAll("video").forEach(video => {
+  video.muted = true;
+  video.play().catch(() => {});
+});
+</script>
+
+</body>
+</html>
